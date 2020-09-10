@@ -1,5 +1,6 @@
 const { celebrate, Joi } = require('celebrate');
 Joi.objectId = require('joi-objectid')(Joi);
+const isURL = require('validator/lib/isURL');
 const NotValid = require('../errors/bad-request-error');
 
 const createUserCheck = celebrate({
@@ -9,7 +10,7 @@ const createUserCheck = celebrate({
     avatar: Joi
       .string()
       .required()
-      .regex(/^((http[s]?|ftp):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$/m)
+      .isURL()
       .error(new NotValid('Поле avatar должно содержать ссылку')),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
@@ -22,7 +23,7 @@ const createCardCheck = celebrate({
     link: Joi
       .string()
       .required()
-      .regex(/^((http[s]?|ftp):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$/m)
+      .isURL()
       .error(new NotValid('Поле link должно содержать ссылку')),
   }),
 });
