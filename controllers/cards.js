@@ -1,46 +1,32 @@
 const Card = require('../models/card');
+const NotFoundError = require('../errors/not-found-err');
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => {
       res.send({ message: cards });
     })
-    .catch((err) => {
-      res.status(500).send({ message: err.message });
-    });
+    .catch(next);
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
 
   Card.create({ name, link, owner })
     .then((card) => res.send(card))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(400).send({ massage: err.message });
-        return;
-      }
-      res.status(500).send({ massage: err.message });
-    });
+    .catch(next);
 };
 
-module.exports.deleteCardById = (req, res) => {
+module.exports.deleteCardById = (req, res, next) => {
   const { cardId } = req.params;
 
   Card.findByIdAndRemove(cardId)
     .then((user) => {
       if (!user) {
-        res.status(404).send({ message: 'карточка с данным id не найдена' });
-      } else {
-        res.status(200).send({ data: user });
+        throw new NotFoundError('карточка с данным id не найдена');
       }
+      res.status(200).send({ data: user });
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(400).send({ message: err.message });
-        return;
-      }
-      res.status(500).send({ message: err.message });
-    });
+    .catch(next);
 };
