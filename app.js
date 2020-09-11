@@ -1,12 +1,15 @@
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const express = require('express');
+const { errors } = require('celebrate');
 
 const auth = require('./middlewares/auth');
 
 const usersRouter = require('./routes/users.js');
 const cardsRouter = require('./routes/cards.js');
-const { errorMiddleware } = require('./middlewares/error')
+const { errorMiddleware } = require('./middlewares/error');
+
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { createUser, login } = require('./controllers/users');
 
@@ -22,6 +25,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useFindAndModify: false,
 });
 
+app.use(requestLogger);
+
 app.post('/signin', login);
 app.post('/signup', createUser);
 
@@ -29,6 +34,10 @@ app.post('/signup', createUser);
 
 app.use('/', usersRouter);
 app.use('/', cardsRouter);
+
+app.use(errorLogger);
+
+app.use(errors());
 
 app.use((req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });

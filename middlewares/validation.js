@@ -10,7 +10,7 @@ const createUserCheck = celebrate({
     avatar: Joi
       .string()
       .required()
-      .isURL()
+      .regex(/^((http[s]?|ftp):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$/m)
       .error(new NotValid('Поле avatar должно содержать ссылку')),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
@@ -23,7 +23,7 @@ const createCardCheck = celebrate({
     link: Joi
       .string()
       .required()
-      .isURL()
+      .regex(/^((http[s]?|ftp):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$/m)
       .error(new NotValid('Поле link должно содержать ссылку')),
   }),
 });
