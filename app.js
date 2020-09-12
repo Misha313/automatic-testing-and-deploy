@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const express = require('express');
 const { errors } = require('celebrate');
+const NotFoundError = require('./errors/not-found-err');
 
 // const auth = require('./middlewares/auth');
 
@@ -40,8 +41,8 @@ app.use(errorLogger);
 
 app.use(errors());
 
-app.use((req, res) => {
-  res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
+app.use(() => {
+  throw new NotFoundError('Запрашиваемый ресурс не найден');
 });
 
 app.use(errorMiddleware);
