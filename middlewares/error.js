@@ -15,7 +15,7 @@ module.exports.errorMiddleware = (err, req, res, next) => {
   }
 
   if (status === 401) {
-    res.status(401).send({ message: err.message });
+    return res.status(401).send({ message: err.message });
   }
 
   if (status === 404) {
